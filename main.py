@@ -12,8 +12,8 @@ from langchain_core.prompts import ChatPromptTemplate
 def main():
     print("Hello from llm-rcg24-rag!")
 
-    chunk_size = 1000
-    chunk_overlap=100
+    chunk_size = 500
+    chunk_overlap=50
 
     load_dotenv()
 
@@ -35,10 +35,10 @@ def main():
 
     all_splits = rc_splitter.split_documents(document)
     
-    print(len(all_splits))
-    all_splits = all_splits[0:50]
+    # print(len(all_splits))
+    # all_splits = all_splits[0:50]
 
-    embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+    embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
     # Index chunks
     vectorstore = FAISS.from_documents(
@@ -48,11 +48,9 @@ def main():
 
     retriever = vectorstore.as_retriever(
         search_type="similarity",
-        search_kwargs={"k": 2}
+        search_kwargs={"k": 3}
     )
     
-    # print(document[0])
-
     message = """
     Read the following chunks of text from the OECD Regions and Cities at a Glance 24:
     {rcgtext}
@@ -63,7 +61,7 @@ def main():
     prompt_template = ChatPromptTemplate.from_messages([("human", message)])
 
     llm = HuggingFaceEndpoint(
-        repo_id='tiiuae/falcon-7b-instruct',
+        repo_id='deepseek-ai/DeepSeek-R1',
         task="text-generation",
         huggingfacehub_api_token=os.getenv("HUGGINGFACEHUB_API_TOKEN")
     )
@@ -73,10 +71,18 @@ def main():
         | prompt_template
         | llm)
     
-    response = rag_chain.invoke("What is the report about?")
+    print("Enter your question related to RCG24:")
+    user_question = input()
+
+    # user_question =  """What is difference between the region
+    #     with the highest and lowest real GDP per capita growth in 2015-2022 period?"""
+    
+    response = rag_chain.invoke(user_question)
+
+    print("\n")
+    print("--------------------------------------------------")
     print(response)
     
-
 
 if __name__ == "__main__":
     
