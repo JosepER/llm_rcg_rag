@@ -1,6 +1,6 @@
 ## Minimal example of RAG for RCG24
 
-This repository provides a minimal implementation of a Retrieval-Augmented Generation (RAG) process to answer questions based on the content of the OECD Regions and Cities at a Glance 24 (RCG24) report.
+This repository provides a minimal implementation of a Retrieval-Augmented Generation (RAG) process to answer questions based on the content of the OECD Regions and Cities at a Glance 2024 (RCG24) report.
 
 ### Prerequisites
 
