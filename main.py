@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.vectorstores import FAISS
+from langchain.vectorstores import Milvus
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -41,10 +41,12 @@ def main():
     embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
     # Index chunks
-    vectorstore = FAISS.from_documents(
-        all_splits,
-        embedding=embedding_function
-        )
+    vectorstore = Milvus.from_documents(
+        documents=all_splits,
+        embedding=embedding_function,
+        connection_args={"host": "localhost", "port": "19530"},
+        collection_name="rcg24"
+    )
 
     retriever = vectorstore.as_retriever(
         search_type="similarity",
